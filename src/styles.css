@@ -1,0 +1,1366 @@
+/* ---------------------------------------------------------------------------
+   Rune — design tokens
+
+   Warm paper, small type, an index rather than a brochure. Everything on the
+   page is a row: a mono label on the left, plain words on the right.
+
+   The one dark thing is the ⌘K panel, because that is the app itself. It gets
+   to be the only picture on the page.
+--------------------------------------------------------------------------- */
+
+:root {
+  /* Paper */
+  --page: #fcfcfc;
+  --surface: #fff;
+  --hover: #f7f7f7;
+
+  /* Ink */
+  --ink: #1b1b1b;
+  --body: #2f2f2f;
+  --soft: #6b6b6b;
+  --muted: #9b9b9b;
+  --faint: #b5b5b5;
+
+  /* Lines */
+  --line: #eaeaea;
+  --ring: #0000001a;
+  --subtle: #0000000d;
+
+  /* The marker. It highlights, it does not decorate. */
+  --marker: #ffe27a;
+
+  /* Activity, from Sources/Rune/Activity.swift.
+     `-lit` is the version that sits on the dark panel, `-ink` the one that has
+     to survive on paper. Two states and silence, so two of each. */
+  --working-lit: oklch(74% 0.17 150);
+  --turn-lit: oklch(68% 0.15 250);
+
+  --working-ink: oklch(52% 0.14 150);
+  --turn-ink: oklch(50% 0.16 258);
+
+  /* Not an activity: the colour of a question an agent printed into its own
+     scrollback, which is a line of terminal output rather than a status. */
+  --ask-lit: oklch(76% 0.16 60);
+
+  --sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* A touch of overshoot. This is the only place the page is allowed to be
+     bouncy, and it is what keeps it from feeling like a spec sheet. */
+  --amo: cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  --expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* How much of the hero window sits off the right of the screen. Stated once
+     because two rules depend on the same number: the stage's overhang, and the
+     title, which has to centre over the part you can actually see. */
+  --bleed: 420px;
+  --shell-half: 530px; /* half of .wrap's 1060px */
+  --shell-pad: 24px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--page);
+  color: var(--body);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* The hero window deliberately overruns the right edge; clip it there rather
+     than letting it open a horizontal scrollbar. */
+  overflow-x: clip;
+}
+
+h1,
+h2 {
+  color: var(--ink);
+  font-weight: 600;
+  letter-spacing: -0.028em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+svg {
+  display: block;
+}
+
+::selection {
+  background: #d9d6d0;
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.87em;
+  color: var(--ink);
+  background: #0000000a;
+  border-radius: 4px;
+  padding: 0.14em 0.36em;
+}
+
+/* --- Shell ---------------------------------------------------------------- */
+
+.wrap {
+  width: 100%;
+  max-width: 1060px;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+/* Prose stays at a readable measure even though the shell is wide enough for
+   the terminal to sit beside the headline. */
+.section__note,
+.note {
+  max-width: 62ch;
+}
+
+.label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* --- Nav ------------------------------------------------------------------ */
+
+.nav {
+  padding-block: 22px 0;
+}
+
+.nav__in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+/* The mark carries the cursor now, so the wordmark no longer blinks one of its
+   own. Two cursors side by side read as a rendering fault. */
+.logo {
+  flex: none;
+}
+
+.brand .logo {
+  transition: rotate 0.3s var(--amo);
+}
+
+.brand:hover .logo {
+  rotate: -6deg;
+}
+
+.foot__mark {
+  display: inline-flex;
+  opacity: 0.45;
+  transition: opacity 0.2s var(--expo);
+}
+
+.foot__mark:hover {
+  opacity: 1;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.nav__right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.nav__right a {
+  padding: 5px 9px;
+  border-radius: 6px;
+  transition: background 0.15s var(--expo), color 0.15s var(--expo);
+}
+
+.nav__right a:hover {
+  background: #0000000a;
+  color: var(--ink);
+}
+
+/* --- Hero ----------------------------------------------------------------- */
+
+.hero {
+  padding-block: clamp(44px, 7vw, 68px) clamp(32px, 5vw, 44px);
+  display: grid;
+  grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 48px);
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+}
+
+.hero h1 {
+  margin-top: 16px;
+  font-size: clamp(32px, 4.6vw, 46px);
+  max-width: 14ch;
+}
+
+/* The marker stroke. Drawn behind the words, slightly crooked, and it grows in
+   on load the way you'd actually drag a highlighter across a line. */
+.mark {
+  position: relative;
+  white-space: nowrap;
+  /* inline-block so the stroke measures against a real box; as a bare inline it
+     comes up short of the last glyph */
+  display: inline-block;
+  /* keeps the z-index:-1 stroke behind the text but in front of the page */
+  isolation: isolate;
+}
+
+.mark::before {
+  content: "";
+  position: absolute;
+  inset: 8% -0.28em 6%;
+  background: var(--marker);
+  border-radius: 3px 10px 4px 8px;
+  rotate: -0.9deg;
+  z-index: -1;
+  transform-origin: left center;
+  animation: swipe 0.55s var(--expo) 0.35s both;
+}
+
+@keyframes swipe {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 1 1;
+  }
+}
+
+.hero__sub {
+  margin-top: 20px;
+  max-width: 50ch;
+  font-size: 16px;
+  line-height: 1.62;
+  color: var(--soft);
+}
+
+.hero__actions {
+  margin-top: 26px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+/* --- Buttons -------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 15px;
+  border-radius: 8px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: transform 0.22s var(--amo), background 0.18s var(--expo),
+    border-color 0.18s var(--expo), color 0.18s var(--expo);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: var(--ring);
+  color: var(--body);
+}
+
+.btn--ghost:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+/* --- The one picture: the ⌘K panel ---------------------------------------- */
+
+.demo {
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .demo {
+    margin-top: clamp(28px, 5vw, 40px);
+  }
+}
+
+/* Above the breakpoint the window is deliberately larger than the space it has,
+   and runs off the right edge of the screen. You are looking at the corner of a
+   real workspace rather than a product shot centred on a slide — and the extra
+   size is what makes the session visibly change when the palette drops away.
+
+   The frame reserves the height; the stage inside it does the overhanging.
+   `86px` is half the shell (530) minus its padding (24) minus the 420px of
+   window we are happy to lose past the edge. */
+@media (min-width: 1100px) {
+  .demo__frame {
+    position: relative;
+    height: 556px;
+  }
+
+  /* Scoped through the frame so these beat the plain `.stage` / `.term` rules
+     further down the sheet, which would otherwise win on source order. */
+  .demo__frame .stage {
+    position: absolute;
+    /* The gap between the frame's right edge and the screen's is
+       `50vw - (shell-half - pad)`, so overhanging by exactly `--bleed` past the
+       screen means insetting by that plus the bleed, negated. */
+    inset: 0 calc(var(--shell-half) - var(--shell-pad) - var(--bleed) - 50vw) 0 0;
+  }
+
+  .demo__frame .term {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .demo__frame .term__body {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* A real title bar centres its title in the window. This window's centre is
+     off the screen, so the title centres over the visible part instead: taken
+     out of the flex flow and stopped short by exactly the bleed. */
+  .demo__frame .term__bar {
+    position: relative;
+  }
+
+  .demo__frame .term__title {
+    position: absolute;
+    inset: 0 var(--bleed) 0 0;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* The hint would land off-screen in its usual corner, so it swaps sides. */
+  .demo__frame .term__hint {
+    right: auto;
+    left: 16px;
+  }
+}
+
+
+/* --- The terminal ---------------------------------------------------------- */
+
+.stage {
+  position: relative;
+}
+
+.term {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #121214;
+  border: 1px solid #00000014;
+  box-shadow: 0 26px 52px -22px #00000059, 0 2px 6px -2px #00000026;
+}
+
+.term__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 34px;
+  padding-inline: 12px;
+  background: #17171a;
+  border-bottom: 1px solid #ffffff0f;
+}
+
+.term__lights {
+  display: flex;
+  gap: 6px;
+  flex: none;
+}
+
+.term__lights i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.term__title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-inline: auto;
+  padding-right: 42px; /* balances the lights, so the title sits centred */
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #ffffff59;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.term__body {
+  padding: 16px 16px 22px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.9;
+  min-height: 322px;
+  /* Keyed on the workspace, so this replays on every preview. Just enough to
+     read as a swap rather than a flicker while you hold ↓. */
+  animation: swap 0.18s var(--expo);
+}
+
+@keyframes swap {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ln {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ln--cmd {
+  color: #fafafa;
+}
+
+.ln--cmd b {
+  color: var(--working-lit);
+  font-weight: 400;
+}
+
+.ln--agent {
+  color: #fafafa;
+}
+
+.ln--out {
+  color: #ffffff59;
+  padding-left: 14px;
+}
+
+/* A blank scrollback line. Without something in it the paragraph has no line
+   box and collapses to nothing. */
+.ln--dim::after {
+  content: "\00a0";
+}
+
+.ln--ask {
+  color: var(--ask-lit);
+}
+
+.caret {
+  display: inline-block;
+  width: 7px;
+  height: 13px;
+  background: #fafafa;
+  translate: 0 2px;
+  animation: blink 1.15s steps(1) infinite;
+}
+
+/* The ⌘K prompt, sitting in the corner the way a hint should. It depresses when
+   the demo presses it, so the palette never appears out of nowhere. */
+.term__hint {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  gap: 5px;
+  z-index: 3;
+  transition: opacity 0.25s var(--expo);
+}
+
+.stage[data-open="true"] .term__hint {
+  opacity: 0;
+}
+
+.term__hint b {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding-inline: 6px;
+  border-radius: 5px;
+  background: #ffffff14;
+  border: 1px solid #ffffff1f;
+  border-bottom-width: 2px;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: #ffffff8c;
+  transition: transform 0.16s var(--amo), background 0.16s var(--expo),
+    color 0.16s var(--expo);
+}
+
+/* Once the demo has handed over and there is still something to find, the key
+   breathes so it stays the obvious next move without shouting. */
+.term__hint[data-asking="true"] b {
+  animation: waiting 2.4s var(--expo) infinite;
+  border-color: #ffffff33;
+}
+
+@keyframes waiting {
+  0%,
+  70%,
+  100% {
+    background: #ffffff14;
+    color: #ffffff8c;
+  }
+  35% {
+    background: #ffffff2b;
+    color: #fafafa;
+  }
+}
+
+/* Typing at the window bumps the key that actually does something. The second
+   cap follows the first so it reads as a hint being waved, not a glitch. */
+.term__hint[data-nudge="true"] b {
+  animation: bump 0.6s var(--expo);
+  background: #ffffff2e;
+  color: #fafafa;
+}
+
+.term__hint[data-nudge="true"] b:last-child {
+  animation-delay: 70ms;
+}
+
+@keyframes bump {
+  0%,
+  100% {
+    transform: none;
+  }
+  30% {
+    transform: translateY(-5px);
+  }
+  55% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(-2px);
+  }
+}
+
+/* --- The palette, over the terminal --------------------------------------- */
+
+/* The veil is a sibling of the window rather than a child of it, because the
+   palette has to be able to hang off the window's edge and a clipped overlay
+   cannot. It matches the window's box exactly. */
+.term__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 12px;
+  background: #0000008c;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s var(--expo);
+}
+
+.stage[data-open="true"] .term__veil {
+  opacity: 1;
+}
+
+.term__palette {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 50%;
+  width: min(100% - 28px, 460px);
+  translate: -50% -50%;
+  opacity: 0;
+  scale: 0.97;
+  pointer-events: none;
+  transition: opacity 0.16s var(--expo), scale 0.24s var(--expo),
+    translate 0.24s var(--expo);
+}
+
+.stage[data-open="false"] .term__palette {
+  translate: -50% calc(-50% + 8px);
+}
+
+.stage[data-open="true"] .term__palette {
+  opacity: 1;
+  scale: 1;
+  pointer-events: auto;
+}
+
+/* When the window runs off the screen its true centre does too, so the palette
+   anchors near the left edge instead and overhangs it — which is also what
+   makes it read as a thing on top of the window rather than a panel set into
+   it. The shadow does the separating. */
+@media (min-width: 1100px) {
+  .term__palette {
+    left: -26px;
+    width: 508px;
+    translate: 0 -50%;
+    box-shadow: 0 32px 64px -20px #00000073;
+    border-radius: 12px;
+  }
+
+  .stage[data-open="false"] .term__palette {
+    translate: 0 calc(-50% + 8px);
+  }
+
+  .stage[data-open="true"] .term__palette {
+    translate: 0 -50%;
+  }
+}
+
+/* Inside the window the list has to leave room for the chrome around it. */
+.term__palette .pal__list {
+  max-height: 206px;
+}
+
+/* --- Sections, which are all just lists ----------------------------------- */
+
+.section {
+  padding-block: clamp(40px, 6vw, 58px);
+  border-top: 1px dashed var(--ring);
+}
+
+.section__head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.section__head h2 {
+  font-size: clamp(21px, 2.6vw, 26px);
+}
+
+.section__note {
+  margin: -8px 0 22px;
+  max-width: 58ch;
+  font-size: 14.5px;
+  line-height: 1.62;
+  color: var(--soft);
+}
+
+/* The row is the whole layout system: mono key, name, then the words. */
+.row {
+  display: grid;
+  grid-template-columns: 6.6rem minmax(0, 1fr);
+  gap: 4px 18px;
+  padding: 13px 10px 13px 8px;
+  margin-inline: -8px;
+  border-bottom: 1px dashed var(--ring);
+  border-radius: 6px;
+  transition: background 0.15s var(--expo);
+}
+
+.row:hover {
+  background: var(--hover);
+}
+
+.row__key {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink);
+  padding-top: 1px;
+}
+
+.row__name {
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+}
+
+.row__desc {
+  grid-column: 2;
+  font-size: 14px;
+  color: var(--soft);
+}
+
+@media (max-width: 560px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+  .row__desc {
+    grid-column: 1;
+  }
+}
+
+/* Four short lists rather than one long one. A flat alphabet of sixteen chords
+   is a reference; these are something you can read once and keep. */
+/* Two, not auto-fit. Three columns fit the shell arithmetically and then wrap
+   every second label onto a second line, which costs more height than the
+   column saved. Two by two also keeps the four groups even. */
+.keygrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px 56px;
+}
+
+@media (max-width: 760px) {
+  .keygrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.keygroup .label {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ring);
+}
+
+/* The rule under a row separates it from the next one, so the last row has
+   nothing to separate itself from. Left on, it lands a few pixels from the
+   section's own divider and reads as a stray line. */
+.row:last-child,
+.step:last-child,
+.keygroup .row:last-child {
+  border-bottom: 0;
+}
+
+/* A compact variant for the shortcut table — key and words on one line. */
+.row--tight {
+  grid-template-columns: 8.4rem minmax(0, 1fr);
+  align-items: baseline;
+  padding-block: 9px;
+  gap: 18px;
+}
+
+.row--tight span:last-child {
+  font-size: 14px;
+  color: var(--soft);
+}
+
+@media (max-width: 560px) {
+  .row--tight {
+    grid-template-columns: 7.2rem minmax(0, 1fr);
+  }
+}
+
+/* --- Status chips --------------------------------------------------------- */
+
+/* --- Install -------------------------------------------------------------- */
+
+.step {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 10px 11px 8px;
+  margin-inline: -8px;
+  border-bottom: 1px dashed var(--ring);
+  border-radius: 6px;
+  transition: background 0.15s var(--expo);
+}
+
+.step:hover {
+  background: var(--hover);
+}
+
+.step__n {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--faint);
+}
+
+.step__cmd {
+  /* Block, or the overflow below does nothing: overflow has no effect on an
+     inline box, so a nowrap command ignored its grid cell and slid under the
+     copy button instead of scrolling inside it. */
+  display: block;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink);
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+
+.step__cmd::-webkit-scrollbar {
+  display: none;
+}
+
+.step__note {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--faint);
+  white-space: normal;
+}
+
+/* The copy button only shows up once you're actually looking at the row. */
+/* An icon rather than the word: "copy" and "copied ✓" are different widths, so
+   the button used to resize the moment you pressed it and shove the command
+   sideways. A square never does. */
+.copy {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  color: var(--muted);
+  border: 1px solid var(--ring);
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.15s var(--expo), color 0.15s var(--expo),
+    border-color 0.15s var(--expo), transform 0.25s var(--amo);
+}
+
+.step:hover .copy,
+.copy:focus-visible,
+.copy[data-done="true"] {
+  opacity: 1;
+}
+
+.copy:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.copy[data-done="true"] {
+  color: #1aa251;
+  border-color: #1aa25166;
+}
+
+@media (hover: none) {
+  .copy {
+    opacity: 1;
+  }
+}
+
+.note {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border: 1px dashed var(--ring);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--soft);
+}
+
+.note b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* --- Footer --------------------------------------------------------------- */
+
+.foot {
+  border-top: 1px dashed var(--ring);
+  padding-block: 26px 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--faint);
+}
+
+.foot a {
+  color: var(--soft);
+  border-bottom: 1px solid var(--line);
+  transition: color 0.18s var(--expo), border-color 0.18s var(--expo);
+}
+
+.foot a:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+/* A still ⌘K, printed on the page so the indicators can be read on the thing
+   they belong to. Narrow enough that the rows stay the shape they are in the
+   app rather than stretching to the shell. */
+.statuspanel {
+  max-width: 560px;
+}
+
+/* Scoped through .statuspanel so it outranks `.pal__input`, which sets the
+   typed-in white and is declared further down the sheet. As a bare
+   `.pal__input--still` it tied on specificity and lost on source order, and the
+   still panel rendered its placeholder as if something had been typed. */
+.statuspanel .pal__input {
+  color: #ffffff4d;
+  user-select: none;
+}
+
+/* --- The ⌘K palette, in the app's own colours ----------------------------- */
+
+.panel {
+  background: #121214;
+  border: 1px solid #00000014;
+  border-radius: 12px;
+  overflow: hidden;
+  color: #fafafa;
+  box-shadow: 0 22px 44px -20px #0000004d, 0 2px 6px -2px #00000026;
+}
+
+.panel__rule {
+  height: 1px;
+  background: #ffffff14;
+}
+
+.pal__field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  color: #ffffff4d;
+}
+
+.pal__input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: 0;
+  outline: none;
+  color: #fafafa;
+  font-family: var(--sans);
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+
+.pal__input::placeholder {
+  color: #ffffff4d;
+}
+
+.pal__list {
+  list-style: none;
+  padding: 6px;
+  /* 6px pad + six 40px rows, so the list never clips a row in half */
+  max-height: 246px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff26 transparent;
+}
+
+.pal__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 8px;
+  border-radius: 7px;
+  cursor: pointer;
+  scroll-margin: 6px;
+}
+
+.pal__row[data-sel="true"] {
+  background: #ffffff14;
+}
+
+/* IconTile in SwitcherPalette.swift: 24pt square, 6pt continuous radius. A real
+   mark gets a white tile and 17pt of artwork; a plain shell gets the dim tile
+   and a full-bleed symbol. */
+.tile {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.tile--art {
+  background: #ffffffeb;
+}
+
+.tile--art svg {
+  width: 17px;
+  height: 17px;
+}
+
+.tile--shell {
+  background: #ffffff12;
+  color: #ffffff8c;
+}
+
+.tile--shell svg {
+  width: 14px;
+  height: 14px;
+}
+
+.pal__name {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.pal__name mark {
+  background: none;
+  color: var(--turn-lit);
+  font-weight: 700;
+}
+
+.pal__path {
+  font-size: 11.5px;
+  color: #ffffff59;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.pal__spacer {
+  flex: 1;
+  min-width: 8px;
+}
+
+.pal__chip {
+  flex: none;
+  font-size: 10.5px;
+  color: #ffffff59;
+  background: #ffffff12;
+  border-radius: 4px;
+  padding: 3px 7px;
+}
+
+/* Where you came from, so ⎋ has somewhere obvious to put you back. */
+.pal__chip--now {
+  color: #ffffff8c;
+}
+
+.pal__pin {
+  flex: none;
+  color: #ffffff59;
+  translate: 0 1px;
+}
+
+.pal__empty {
+  padding: 28px 14px;
+  text-align: center;
+  color: #ffffff59;
+  font-size: 13px;
+}
+
+.pal__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: flex-end;
+  padding: 9px 14px;
+}
+
+.pal__hint {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  color: #ffffff59;
+}
+
+.cap {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 500;
+  color: #ffffff8c;
+  background: #ffffff14;
+  border: 1px solid #ffffff1a;
+  border-radius: 4px;
+  min-width: 18px;
+  height: 16px;
+  padding: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 520px) {
+  .pal__path {
+    display: none;
+  }
+}
+
+/* --- Activity badge, on the panel ----------------------------------------- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 18px;
+  padding: 0 7px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 500;
+  flex: none;
+  white-space: nowrap;
+  background: color-mix(in oklch, var(--tone) 15%, transparent);
+  color: var(--tone);
+}
+
+.badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--tone);
+  flex: none;
+}
+
+/* `working · 2m 14s`. The clock is quieter than the state it belongs to. */
+.badge em {
+  font-style: normal;
+  opacity: 0.7;
+}
+
+.badge__dot[data-pulse="true"] {
+  animation: breathe 0.9s var(--expo) infinite alternate;
+}
+
+@keyframes breathe {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.35;
+  }
+}
+
+/* --- Entrance ------------------------------------------------------------- */
+
+.rise {
+  animation: rise 0.6s var(--expo) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --- The page's own hint bar ---------------------------------------------- */
+
+/* Built to read as the paper twin of `.pal__foot`: same spacing, same 10.5px
+   labels, same idea. The site claims you never have to leave the keyboard, so
+   it had better be true of the site. */
+.keybar {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  translate: -50% 0;
+  z-index: 60;
+  display: flex;
+  gap: 14px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--ring);
+  background: color-mix(in srgb, var(--page) 86%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 28px -14px #00000026;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  animation: rise 0.6s var(--expo) 0.8s both;
+}
+
+.keybar__hint {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+/* One keycap, used by the bar, the section headings and the download buttons,
+   so the page teaches the same shortcut in three places without three looks.
+   The doubled bottom border is the whole trick: it reads as a key you could
+   press, and pressing it takes that border away. */
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 4px;
+  border: 1px solid var(--ring);
+  border-bottom-width: 2px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 500;
+  transition: transform 0.18s var(--amo), background 0.18s var(--expo),
+    color 0.18s var(--expo);
+}
+
+/* Pressed, so the page answers you rather than just listing itself. */
+.kbd[data-hit="true"] {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+  background: var(--marker);
+}
+
+/* Beside a heading it is an aside, not a label: quiet until the heading is
+   worth acting on. */
+.kbd--head {
+  color: var(--muted);
+  background: transparent;
+  translate: 0 -2px;
+}
+
+.section__head:hover .kbd--head {
+  color: var(--ink);
+  background: var(--surface);
+}
+
+/* On the ink button, the same cap inverted. */
+.kbd--on-ink {
+  margin-left: 3px;
+  border-color: #ffffff3d;
+  background: #ffffff1f;
+  color: #fff;
+}
+
+.btn:hover .kbd--on-ink {
+  background: #ffffff2e;
+}
+
+/* No keyboard, no bar. */
+@media (max-width: 820px), (hover: none) {
+  .keybar {
+    display: none;
+  }
+}
+
+/* The quarantine warning in the hero. Tighter than the same block in the
+   install section, because the hero column is 460px and the point here is that
+   you see it before you click, not that you read it twice. */
+.hero__caveat {
+  margin-top: 22px;
+}
+
+.hero__caveat .note {
+  margin-top: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.hero__caveat .step {
+  margin-top: 8px;
+  align-items: start;
+}
+
+/* The hero column is 460px and the command is 52 characters, so left to scroll
+   it truncates. A command you are about to run on your own machine has to be
+   readable in full, so here it wraps instead. It breaks at the space before the
+   path, which is the only sensible place anyway. */
+.hero__caveat .step__cmd {
+  white-space: normal;
+  overflow-x: visible;
+}
+
+.hero__caveat .copy {
+  margin-top: 1px;
+}
+
+
+/* `rune install-opencode-hook` is 26 characters and will not fit the 8.4rem
+   column the chords use. It has to widen the grid column itself: a min-width on
+   the child just overflows a track that is already sized. */
+.row--cmd {
+  grid-template-columns: 15rem minmax(0, 1fr);
+}
+
+@media (max-width: 620px) {
+  .row--cmd {
+    grid-template-columns: 1fr;
+  }
+}
