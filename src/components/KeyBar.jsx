@@ -13,6 +13,7 @@ const KEYS = [
   { key: "k", label: "Keys", to: "#keys" },
   { key: "p", label: "Places", to: "#layout" },
   { key: "s", label: "States", to: "#status" },
+  { key: "w", label: "Limits", to: "#limits" },
   { key: "i", label: "Install", to: "#install" },
   { key: "d", label: "Download", to: "download" },
 ];

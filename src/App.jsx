@@ -3,7 +3,7 @@ import Logo from "./components/Logo";
 import Quarantine from "./components/Quarantine";
 import StatusPanel from "./components/StatusPanel";
 import TerminalDemo from "./components/TerminalDemo";
-import { AXES, CLI, KEYGROUPS, RELEASES, REPO, SOURCES } from "./data";
+import { AXES, KEYGROUPS, LIMITS, RELEASES, REPO, SOURCES } from "./data";
 import useRelease from "./useRelease";
 
 export default function App() {
@@ -142,6 +142,27 @@ export default function App() {
         </section>
 
 
+        {/* --- Limits ----------------------------------------------------- */}
+        <section className="section" id="limits">
+          <div className="section__head">
+            <h2>What it doesn't do.</h2>
+            <kbd className="kbd kbd--head">w</kbd>
+          </div>
+          <p className="section__note">
+            A program that watches every terminal you have open owes you the other
+            half of the story. Both of these are checkable in the source.
+          </p>
+
+          <div className="limits">
+            {LIMITS.map((limit) => (
+              <div className="limit" key={limit.name}>
+                <h3>{limit.name}</h3>
+                <p>{limit.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* --- Install ---------------------------------------------------- */}
         <section className="section" id="install">
           <div className="section__head">
@@ -163,19 +184,25 @@ export default function App() {
             </a>
           </div>
 
-          <Quarantine />
 
-          <p className="section__note" style={{ marginTop: "2.4rem" }}>
-            There is a <code>rune</code> command too, put on your PATH by{" "}
-            <code>./scripts/install-cli.sh</code>.
-          </p>
+          {release.recent.length > 0 && (
+            <>
+              <p className="section__note" style={{ marginTop: "2.4rem" }}>
+                Recent releases, read from GitHub as you loaded this page:
+              </p>
 
-          {CLI.map(([cmd, what]) => (
-            <div className="row row--tight row--cmd" key={cmd}>
-              <span className="row__key">{cmd}</span>
-              <span>{what}</span>
-            </div>
-          ))}
+              <ul className="ships">
+                {release.recent.map((r) => (
+                  <li key={r.tag}>
+                    <a href={r.url} target="_blank" rel="noreferrer">
+                      <span className="ships__tag">v{r.tag}</span>
+                      <span className="ships__when">{r.when}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </section>
       </main>
 

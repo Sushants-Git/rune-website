@@ -9,12 +9,20 @@
 --------------------------------------------------------------------------- */
 
 :root {
-  /* Paper */
-  --page: #fcfcfc;
-  --surface: #fff;
-  --hover: #f7f7f7;
+  /* Paper.
 
-  /* Ink */
+     Sage, at the very edge of being a colour at all. Both obvious answers for a
+     terminal product are already taken: cold blue-grey is the devtool reflex,
+     warm cream is what this page was and is the editorial reflex one tier down.
+     A neutral pulled a few thousandths toward the green Rune already puts on
+     every working row is neither, and it ties the page to the one hue the
+     product actually owns. */
+  --page: oklch(98.8% 0.005 152);
+  --surface: oklch(99.7% 0.002 152);
+  --hover: oklch(97% 0.008 152);
+
+  /* Ink. The original neutral ramp, untinted: the lighter, sage-tinted text was
+     tried and taken back out. The paper keeps its tint; the words do not. */
   --ink: #1b1b1b;
   --body: #2f2f2f;
   --soft: #6b6b6b;
@@ -22,25 +30,52 @@
   --faint: #b5b5b5;
 
   /* Lines */
-  --line: #eaeaea;
-  --ring: #0000001a;
-  --subtle: #0000000d;
+  --line: oklch(93% 0.008 152);
+  --ring: oklch(28% 0.021 155 / 0.13);
+  --subtle: oklch(28% 0.021 155 / 0.06);
 
-  /* The marker. It highlights, it does not decorate. */
-  --marker: #ffe27a;
+  /* The marker. Yellow, the way a highlighter actually is, lifted and softened
+     a little so it sits inside the sage palette rather than on top of it. It
+     highlights, it does not decorate. */
+  --marker: oklch(92% 0.115 98);
+
+  /* The dark surface, barely tinted. Any more green here and the working badge
+     would sit on its own colour and stop reading as a signal. */
+  --panel: oklch(18.5% 0.007 155);
+  --panel-bar: oklch(21.5% 0.007 155);
+
+  /* The ⌘K panel, from PaletteStyle in SwitcherPalette.swift (0.9.5, "give the
+     ⌘K panel real glass"). Two layers on purpose, and the comment there says
+     why: the material makes it glass, the scrim stops the glass deciding how
+     readable the rows are. A plain blur samples the terminal, so over a pale
+     `ls` the panel went milky and the rows lost their contrast. The darkness
+     has to be a constant, not a function of what happened to be on screen. */
+  --glass-scrim: rgb(10 10 10 / 0.42); /* NSColor(white: 0.04, alpha: 0.42) */
+  --glass-border: rgb(255 255 255 / 0.1); /* NSColor(white: 1, alpha: 0.10) */
+
+  /* Frost. Two things separate frosted glass from clear tinted glass: the blur
+     is heavy enough that what is behind becomes shape rather than text, and the
+     surface scatters a little light of its own. The blur does the first; this
+     film does the second. Kept to a few percent so the scrim still owns how
+     dark the panel is, which is the whole reason the scrim exists: at 7% the
+     film lifted the panel enough to drop `your turn` to 4.45:1, under AA for
+     10.5px text, and systemBlue is not mine to brighten. The blur carries the
+     frost; the film only has to hint that the surface scatters. */
+  --glass-blur: 34px;
+  --glass-frost: linear-gradient(rgb(255 255 255 / 0.045), rgb(255 255 255 / 0.015));
 
   /* Activity, from Sources/Rune/Activity.swift.
      `-lit` is the version that sits on the dark panel, `-ink` the one that has
      to survive on paper. Two states and silence, so two of each. */
-  --working-lit: oklch(74% 0.17 150);
-  --turn-lit: oklch(68% 0.15 250);
+  --working-lit: #30d158; /* NSColor.systemGreen, dark appearance */
+  --turn-lit: #0a84ff; /* NSColor.systemBlue, dark appearance */
 
-  --working-ink: oklch(52% 0.14 150);
-  --turn-ink: oklch(50% 0.16 258);
+  --working-ink: oklch(50% 0.13 152);
+  --turn-ink: oklch(48% 0.15 258);
 
   /* Not an activity: the colour of a question an agent printed into its own
      scrollback, which is a line of terminal output rather than a status. */
-  --ask-lit: oklch(76% 0.16 60);
+  --ask-lit: oklch(78% 0.15 62);
 
   --sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -57,6 +92,7 @@
   --shell-half: 530px; /* half of .wrap's 1060px */
   --shell-pad: 24px;
 }
+
 
 *,
 *::before,
@@ -116,7 +152,7 @@ svg {
 }
 
 ::selection {
-  background: #d9d6d0;
+  background: oklch(90% 0.05 152);
   color: var(--ink);
 }
 
@@ -426,7 +462,7 @@ code {
   position: relative;
   border-radius: 12px;
   overflow: hidden;
-  background: #121214;
+  background: var(--panel);
   border: 1px solid #00000014;
   box-shadow: 0 26px 52px -22px #00000059, 0 2px 6px -2px #00000026;
 }
@@ -437,7 +473,7 @@ code {
   gap: 10px;
   height: 34px;
   padding-inline: 12px;
-  background: #17171a;
+  background: var(--panel-bar);
   border-bottom: 1px solid #ffffff0f;
 }
 
@@ -621,7 +657,7 @@ code {
   inset: 0;
   z-index: 2;
   border-radius: 12px;
-  background: #0000008c;
+  background: rgb(0 0 0 / 0.6);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s var(--expo);
@@ -655,16 +691,18 @@ code {
   pointer-events: auto;
 }
 
-/* When the window runs off the screen its true centre does too, so the palette
-   anchors near the left edge instead and overhangs it — which is also what
-   makes it read as a thing on top of the window rather than a panel set into
-   it. The shadow does the separating. */
+/* The panel hangs off the window's left edge, so part of it is over paper. That
+   part frosts lighter, because that is what frosted glass does over something
+   pale, and it is the clearest signal that the panel is floating rather than
+   inset. What stops it reading as two shades is the edge: a brighter border and
+   a real shadow all the way round, so the eye reads one pane of glass crossing
+   a boundary. */
 @media (min-width: 1100px) {
   .term__palette {
-    left: -26px;
+    left: -24px;
     width: 508px;
     translate: 0 -50%;
-    box-shadow: 0 32px 64px -20px #00000073;
+    box-shadow: 0 26px 60px -18px rgb(0 0 0 / 0.55), 0 2px 10px -3px rgb(0 0 0 / 0.35);
     border-radius: 12px;
   }
 
@@ -941,8 +979,17 @@ code {
 /* A still ⌘K, printed on the page so the indicators can be read on the thing
    they belong to. Narrow enough that the rows stay the shape they are in the
    app rather than stretching to the shell. */
-.statuspanel {
+/* Scoped `.panel.statuspanel`, not bare `.statuspanel`: the two tie on
+   specificity and `.panel` is declared below, so a bare selector loses on
+   source order and this panel rendered as translucent grey over the paper.
+   That is the exact failure the scrim exists to prevent, arrived at from the
+   CSS side instead of the compositing side. */
+.panel.statuspanel {
   max-width: 560px;
+  background: var(--glass-frost), linear-gradient(var(--glass-scrim), var(--glass-scrim)),
+    var(--panel);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 /* Scoped through .statuspanel so it outranks `.pal__input`, which sets the
@@ -957,8 +1004,10 @@ code {
 /* --- The ⌘K palette, in the app's own colours ----------------------------- */
 
 .panel {
-  background: #121214;
-  border: 1px solid #00000014;
+  background: var(--glass-frost), var(--glass-scrim);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%) brightness(1.04);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%) brightness(1.04);
+  border: 1px solid var(--glass-border);
   border-radius: 12px;
   overflow: hidden;
   color: #fafafa;
@@ -1144,6 +1193,8 @@ code {
 
 /* --- Activity badge, on the panel ----------------------------------------- */
 
+/* ActivityBadge in Activity.swift: 18 tall, 4 radius, a 6px dot inset 7 from
+   the leading edge with 5 to the text, and both pinned to centerYAnchor. */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -1153,6 +1204,7 @@ code {
   border-radius: 4px;
   font-size: 10.5px;
   font-weight: 500;
+  line-height: 1;
   flex: none;
   white-space: nowrap;
   background: color-mix(in oklch, var(--tone) 15%, transparent);
@@ -1165,6 +1217,9 @@ code {
   border-radius: 50%;
   background: var(--tone);
   flex: none;
+  /* align-self rather than the flex default, so the dot sits on the badge's
+     centre line and not on the text's baseline box. */
+  align-self: center;
 }
 
 /* `working · 2m 14s`. The clock is quieter than the state it belongs to. */
@@ -1352,15 +1407,69 @@ code {
 }
 
 
-/* `rune install-opencode-hook` is 26 characters and will not fit the 8.4rem
-   column the chords use. It has to widen the grid column itself: a min-width on
-   the child just overflows a track that is already sized. */
-.row--cmd {
-  grid-template-columns: 15rem minmax(0, 1fr);
+
+/* --- What it doesn't do ---------------------------------------------------- */
+
+/* Two columns of claims rather than a paragraph of them, because each one is a
+   separate promise and a reader wants to check them one at a time. */
+.limits {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px 48px;
 }
 
-@media (max-width: 620px) {
-  .row--cmd {
+@media (max-width: 760px) {
+  .limits {
     grid-template-columns: 1fr;
   }
+}
+
+.limit h3 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+.limit p {
+  margin-top: 7px;
+  font-size: 14px;
+  line-height: 1.62;
+  color: var(--soft);
+}
+
+/* --- Recent releases -------------------------------------------------------- */
+
+/* Read live, so it is evidence rather than a claim about pace. Tags are short
+   and there are only six, so they read better as a row of chips than a list. */
+.ships {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ships a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid var(--ring);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  transition: border-color 0.18s var(--expo), background 0.18s var(--expo);
+}
+
+.ships a:hover {
+  border-color: var(--ink);
+  background: var(--surface);
+}
+
+.ships__tag {
+  color: var(--ink);
+}
+
+.ships__when {
+  color: var(--faint);
 }

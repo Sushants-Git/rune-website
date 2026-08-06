@@ -72,14 +72,25 @@ export const AXES = [
   },
 ];
 
-/* The CLI, from `rune --help`. Worth listing because the opencode hook above is
-   installed with one of these, so the page would otherwise name a command it
-   never explains. */
-export const CLI = [
-  ["rune", "Open Rune, or bring it to the front"],
-  ["rune <directory>", "Open a workspace there"],
-  ["rune update", "Update in place"],
-  ["rune install-opencode-hook", "Teach opencode to report what it's doing"],
+/* What Rune does not do, which for a program that watches your terminals is the
+   more useful half of the story. Every line here is checkable in the source:
+
+     - the only hosts in Sources/Rune are api.github.com and github.com for
+       updates, and opencode.ai once, to fetch the plugin you asked for
+     - grepping for analytics, telemetry, posthog, segment, mixpanel or sentry
+       across Sources/Rune returns nothing
+     - `ghostty_surface_read_text` appears once, in ZoomScrollTest.swift; the
+       agent-state path never calls it
+     - Updater.checkInterval is 60 * 60 */
+export const LIMITS = [
+  {
+    name: "It doesn't read your screen",
+    desc: "Rune asks each agent what it is doing. It never scrapes the rendered terminal, which it tried once and abandoned: the read takes the same lock the IO thread holds, so it stalled under exactly the busy agent you wanted to watch.",
+  },
+  {
+    name: "It doesn't phone home",
+    desc: "No analytics, no telemetry, no account. The only thing Rune ever sends is a request to the GitHub Releases API, once an hour, to see whether a newer version exists.",
+  },
 ];
 
 /* Where each agent's state comes from. All three publish now: opencode gained a
@@ -95,7 +106,7 @@ export const SOURCES = [
   },
   {
     name: "opencode",
-    detail: "a plugin, installed with rune install-opencode-hook",
+    detail: "a plugin, installed with one command",
   },
 ];
 
