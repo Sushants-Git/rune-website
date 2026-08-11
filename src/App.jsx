@@ -89,8 +89,7 @@ export default function App() {
               The terminal for humans <span className="mark">who run agents</span>.
             </h1>
             <p className="hero__sub">
-              Stop hunting for the one that's waiting on you. Every row says what it's
-              doing, and ⌘K gets you there.
+              An ergonomic terminal, built for moving fast with agents.
             </p>
 
             <div className="hero__actions">
