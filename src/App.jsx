@@ -130,6 +130,14 @@ export default function App() {
           <div className="section__head">
             <h2>Know which one is working.</h2>
           </div>
+
+          {/* opencode is the only one of the three that has to be told to
+              report. The command is the whole of what you have to do, so it
+              leads the section rather than trailing it in a paragraph. */}
+          <div className="hook">
+            <Cmd cmd={OPENCODE_HOOK} />
+          </div>
+
           <p className="section__note">
             <code>working</code> counts up while it runs. <code>your turn</code> means it
             stopped. Nothing at all means a plain shell, or an agent Rune can't read.
@@ -149,33 +157,6 @@ export default function App() {
             ))}
           </div>
 
-          {/* opencode is the only one of the three that has to be told to
-              report, so the command that tells it lives here rather than in a
-              README nobody has open. */}
-          <div className="hook">
-            <p className="label">Teaching opencode to report</p>
-            <Cmd cmd={OPENCODE_HOOK} />
-
-            <p>
-              Two things, because opencode needs both: the plugin lands at{" "}
-              <code>~/.config/opencode/plugin/rune.js</code>, and an entry naming it goes
-              into <code>~/.config/opencode/opencode.json</code>. Dropping the file in on
-              its own does nothing. That config is edited rather than replaced, so your
-              providers and MCP servers stay where they are.
-            </p>
-
-            <p>
-              Without it Rune still reads opencode's session database and infers a live
-              turn from a missing completion timestamp. With it, opencode says what it is
-              doing itself, and immediately.
-            </p>
-
-            <p>
-              Needs <code>rune</code> on your PATH — <code>./scripts/install-cli.sh</code>{" "}
-              puts it there. Otherwise call the binary:{" "}
-              <code>/Applications/Rune.app/Contents/MacOS/Rune install-opencode-hook</code>.
-            </p>
-          </div>
         </section>
 
 
