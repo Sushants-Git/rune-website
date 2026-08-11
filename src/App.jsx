@@ -89,8 +89,8 @@ export default function App() {
               The terminal for humans <span className="mark">who run agents</span>.
             </h1>
             <p className="hero__sub">
-              Every terminal says what its agent is doing, and every one of them is a
-              chord away.
+              Stop hunting for the one that's waiting on you. Every row says what it's
+              doing, and ⌘K gets you there.
             </p>
 
             <div className="hero__actions">
