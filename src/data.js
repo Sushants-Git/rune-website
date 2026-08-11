@@ -32,12 +32,20 @@ export const QUARANTINE = "xattr -dr com.apple.quarantine /Applications/Rune.app
 
    `shot` is where each step's picture goes. Drop a file at that path in
    `public/` and it appears; until then the frame stays empty rather than
-   showing a broken image. */
+   showing a broken image.
+
+   `shotWidth` caps one of them. The first two are whole windows and the last is
+   a patch of a Finder window, so left at the same width its icons came out
+   twice the size of the same icon two steps above — the pictures have to agree
+   about how big a Mac is. */
 export const INSTALL_STEPS = [
   {
     title: "Open Rune.dmg",
-    desc: "From your Downloads folder.",
+    desc: "From your Downloads folder, or the browser's download list.",
     shot: "/steps/1-open-dmg.png",
+    // 319px wide as captured; the frame would otherwise stretch it to 640 and
+    // hand you a blurred picture of a crisp one.
+    shotWidth: 320,
   },
   {
     title: "Drag Rune into Applications",
@@ -54,6 +62,7 @@ export const INSTALL_STEPS = [
     title: "Open Rune from Applications",
     desc: "It picks up the ~/.config/ghostty/config you already have.",
     shot: "/steps/4-open.png",
+    shotWidth: 320,
   },
 ];
 

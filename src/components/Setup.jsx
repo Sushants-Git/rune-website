@@ -55,7 +55,7 @@ export default function Setup({ version, downloadUrl }) {
                     {step.cmd && <Cmd cmd={step.cmd} />}
                   </div>
                 </div>
-                <Shot src={step.shot} alt={step.title} />
+                <Shot src={step.shot} alt={step.title} width={step.shotWidth} />
               </li>
             ))}
           </ol>
@@ -83,12 +83,12 @@ export default function Setup({ version, downloadUrl }) {
 /* A picture that isn't there yet leaves nothing behind rather than a broken
    image icon: the frame unmounts on the first error, so the step is just words
    until a file exists at that path. */
-function Shot({ src, alt }) {
+function Shot({ src, alt, width }) {
   const [missing, setMissing] = useState(false);
   if (!src || missing) return null;
 
   return (
-    <figure className="shot">
+    <figure className="shot" style={width ? { maxWidth: width } : undefined}>
       <img src={src} alt={alt} loading="lazy" onError={() => setMissing(true)} />
     </figure>
   );
