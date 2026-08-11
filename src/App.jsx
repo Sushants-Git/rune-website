@@ -89,7 +89,8 @@ export default function App() {
               The terminal for humans <span className="mark">who run agents</span>.
             </h1>
             <p className="hero__sub">
-              An ergonomic terminal, built for moving fast with agents.
+              An ergonomic terminal, built for moving fast with agents. Everything is
+              just a key away.
             </p>
 
             <div className="hero__actions">
