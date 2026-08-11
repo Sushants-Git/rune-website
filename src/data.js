@@ -79,6 +79,13 @@ export const ACTIVITY = {
   waiting: { label: "your turn", tone: "var(--turn-lit)", pulses: false },
 };
 
+/* The one agent that needs something installed before it can report.
+
+   The paths are the ones installOpenCodeHook() actually writes, not a
+   description of them: the plugin lands at ~/.config/opencode/plugin/rune.js
+   and the registration goes into ~/.config/opencode/opencode.json. */
+export const OPENCODE_HOOK = "rune install-opencode-hook";
+
 /* Where each agent's state comes from. All three publish now: opencode gained a
    plugin in 0.8.x, so the old "publishes nothing" line is no longer true. */
 export const SOURCES = [

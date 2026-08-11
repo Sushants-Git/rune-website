@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rune</title>
     <meta
@@ -11,28 +10,44 @@
     />
     <meta name="theme-color" content="#fcfcfc" />
     <meta name="color-scheme" content="light" />
-    <link rel="canonical" href="https://rune-website.vercel.app/" />
+    <link rel="canonical" href="https://rune.sushant.tech/" />
+
+    <!--
+      Icons. The SVG is the source and every browser that takes one prefers it,
+      but Google Search does not read SVG favicons and iOS screenshots the page
+      when there is no apple-touch-icon, so the raster set exists for them.
+      /favicon.ico is a real multi-size ICO (16 and 32) at the path Google
+      probes by name whether or not anything links to it. All five are rendered
+      from favicon.svg by scripts/icons.mjs — one source for the mark.
+    -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <!--
       The share card. Absolute URLs throughout, and not as a formality: X,
       Facebook and LinkedIn all resolve og:image against their own host rather
       than the page's, so a relative path is a card that silently renders
-      without a picture. If the site moves to another domain, these four hrefs
-      and the canonical above are what has to move with it.
+      without a picture. These four and the canonical above are what has to
+      move if the site ever changes domain.
 
-      og:image is public/og.png — 1200×630 at 2× (2400×1200), which is what
+      og:image is public/og.png — 1200×630 at 2× (2400×1260), which is what
       every platform crops from. Twitter reads the og:* tags for everything it
-      can, so only the two it has no equivalent for are repeated below.
+      can, so only the ones it has no equivalent for are repeated below.
     -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Rune" />
-    <meta property="og:url" content="https://rune-website.vercel.app/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://rune.sushant.tech/" />
     <meta property="og:title" content="Rune — the terminal for humans who run agents" />
     <meta
       property="og:description"
       content="An ergonomic macOS terminal, built for moving fast with agents. Everything is just a key away. A shell around libghostty."
     />
-    <meta property="og:image" content="https://rune-website.vercel.app/og.png" />
+    <meta property="og:image" content="https://rune.sushant.tech/og.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="2400" />
     <meta property="og:image:height" content="1260" />
@@ -48,11 +63,38 @@
       name="twitter:description"
       content="An ergonomic macOS terminal, built for moving fast with agents. Everything is just a key away. A shell around libghostty."
     />
-    <meta name="twitter:image" content="https://rune-website.vercel.app/og.png" />
+    <meta name="twitter:image" content="https://rune.sushant.tech/og.png" />
     <meta
       name="twitter:image:alt"
       content="The Rune ⌘K switcher, listing four workspaces with the two running agents marked working and one marked your turn."
     />
+
+    <!--
+      SoftwareApplication rather than WebPage: the page is about a thing you can
+      download, and that is the type whose fields — operating system, category,
+      price — a search engine can actually do something with.
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Rune",
+        "url": "https://rune.sushant.tech/",
+        "description": "An ergonomic macOS terminal, built for moving fast with agents. Everything is just a key away.",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "macOS 13.0 or later",
+        "image": "https://rune.sushant.tech/og.png",
+        "downloadUrl": "https://github.com/Sushants-Git/Rune/releases/latest",
+        "softwareHelp": "https://github.com/Sushants-Git/Rune#readme",
+        "license": "https://github.com/Sushants-Git/Rune/blob/main/LICENSE",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "author": {
+          "@type": "Person",
+          "name": "Sushant Mishra",
+          "url": "https://github.com/Sushants-Git"
+        }
+      }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -62,7 +104,28 @@
     />
   </head>
   <body>
-    <div id="root"></div>
+    <!--
+      React replaces everything inside #root on mount, so this is what a reader
+      that does not run JavaScript gets: the heading, the sentence under it, and
+      the link to the download. Google executes JavaScript and sees the real
+      page; Slack, LinkedIn and the various preview bots mostly do not, and
+      until now they were handed an empty div.
+    -->
+    <div id="root">
+      <!-- The measure lives on this inner div, not on #root: React replaces the
+           children and keeps the element it mounted into, so a style attribute
+           up there would outlive the fallback and box the real page. -->
+      <div style="max-width: 1060px; margin: 0 auto; padding: 68px 24px">
+        <h1>The terminal for humans who run agents.</h1>
+        <p>
+          An ergonomic macOS terminal, built for moving fast with agents. Everything is
+          just a key away.
+        </p>
+        <p>
+          <a href="https://github.com/Sushants-Git/Rune/releases/latest">Download Rune</a>
+        </p>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

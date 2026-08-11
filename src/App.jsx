@@ -3,7 +3,8 @@ import Logo from "./components/Logo";
 import Setup from "./components/Setup";
 import StatusPanel from "./components/StatusPanel";
 import TerminalDemo from "./components/TerminalDemo";
-import { GHOSTTY, KEYS, RELEASES, REPO, SOURCES } from "./data";
+import Cmd from "./components/Cmd";
+import { GHOSTTY, KEYS, OPENCODE_HOOK, RELEASES, REPO, SOURCES } from "./data";
 import useRelease from "./useRelease";
 
 /* Two pages, and the whole router. `#/setup` is the one you land on after
@@ -146,6 +147,34 @@ export default function App() {
                 <span>{source.detail}</span>
               </div>
             ))}
+          </div>
+
+          {/* opencode is the only one of the three that has to be told to
+              report, so the command that tells it lives here rather than in a
+              README nobody has open. */}
+          <div className="hook">
+            <p className="label">Teaching opencode to report</p>
+            <Cmd cmd={OPENCODE_HOOK} />
+
+            <p>
+              Two things, because opencode needs both: the plugin lands at{" "}
+              <code>~/.config/opencode/plugin/rune.js</code>, and an entry naming it goes
+              into <code>~/.config/opencode/opencode.json</code>. Dropping the file in on
+              its own does nothing. That config is edited rather than replaced, so your
+              providers and MCP servers stay where they are.
+            </p>
+
+            <p>
+              Without it Rune still reads opencode's session database and infers a live
+              turn from a missing completion timestamp. With it, opencode says what it is
+              doing itself, and immediately.
+            </p>
+
+            <p>
+              Needs <code>rune</code> on your PATH — <code>./scripts/install-cli.sh</code>{" "}
+              puts it there. Otherwise call the binary:{" "}
+              <code>/Applications/Rune.app/Contents/MacOS/Rune install-opencode-hook</code>.
+            </p>
           </div>
         </section>
 

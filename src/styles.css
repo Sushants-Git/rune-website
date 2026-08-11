@@ -850,6 +850,39 @@ code {
 
 /* --- Status chips --------------------------------------------------------- */
 
+/* The opencode hook, at the foot of the states section. Prose measure rather
+   than the shell's, and the command boxed the way the install page boxes its
+   one — a bare .step here would rule itself off from the paragraph under it. */
+.hook {
+  margin-top: clamp(30px, 4vw, 44px);
+  max-width: 62ch;
+}
+
+.hook .label {
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--ring);
+}
+
+.hook .step {
+  margin: 0;
+  padding: 11px 12px;
+  border: 1px dashed var(--ring);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.hook .step:hover {
+  background: var(--surface);
+}
+
+.hook p:not(.label) {
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.62;
+  color: var(--soft);
+}
+
 /* --- Install -------------------------------------------------------------- */
 
 .step {
