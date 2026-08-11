@@ -850,11 +850,11 @@ code {
 
 /* --- Status chips --------------------------------------------------------- */
 
-/* The opencode command, under the states heading. Prose measure rather than
+/* The opencode command, under the row that names it. Prose measure rather than
    the shell's, and boxed the way the install page boxes its one — a bare .step
-   here would rule itself off from the paragraph beneath it. */
+   here would rule itself off from the rows above it. */
 .hook {
-  margin-bottom: 22px;
+  margin-top: 22px;
   max-width: 62ch;
 }
 

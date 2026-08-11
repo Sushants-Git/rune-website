@@ -131,13 +131,6 @@ export default function App() {
             <h2>Know which one is working.</h2>
           </div>
 
-          {/* opencode is the only one of the three that has to be told to
-              report. The command is the whole of what you have to do, so it
-              leads the section rather than trailing it in a paragraph. */}
-          <div className="hook">
-            <Cmd cmd={OPENCODE_HOOK} />
-          </div>
-
           <p className="section__note">
             <code>working</code> counts up while it runs. <code>your turn</code> means it
             stopped. Nothing at all means a plain shell, or an agent Rune can't read.
@@ -157,6 +150,12 @@ export default function App() {
             ))}
           </div>
 
+          {/* Directly under the row that names it: "installed with one command"
+              and then the command, rather than a reader holding the sentence
+              while they go looking for it. */}
+          <div className="hook">
+            <Cmd cmd={OPENCODE_HOOK} />
+          </div>
         </section>
 
 
