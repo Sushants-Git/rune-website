@@ -162,18 +162,18 @@ export default function TerminalDemo() {
     };
   }, [live]);
 
-  /* The round ends with the panel still up, so the field under the cursor has to
-     be the one that receives what you type. An open switcher that silently
-     swallows the first thing typed at it is worse than no switcher at all.
+  /* Nothing here takes the keyboard on its own.
 
-     Only when it's actually on screen, and never scrolling the page to do it. */
-  useEffect(() => {
-    if (!done || live) return;
-    const box = stageRef.current?.getBoundingClientRect();
-    if (!box) return;
-    const onScreen = box.top < window.innerHeight * 0.85 && box.bottom > window.innerHeight * 0.15;
-    if (onScreen) inputRef.current?.focus({ preventScroll: true });
-  }, [done, live]);
+     The demo used to focus the search field when its round finished, so that an
+     open switcher wouldn't swallow the first thing typed at it. Guarded by an
+     on-screen check and `preventScroll`, both of which turn out not to be
+     enough: the round ends seconds after the page loads, by which time you may
+     be reading something else, and a focus that lands off-screen still scrolls
+     the page back in the browsers that ignore `preventScroll`. Being yanked
+     back to the top is a worse failure than a keystroke going nowhere.
+
+     Typing at it without focus is already answered: the ⌘K cap flashes, which
+     says what to press. Focus arrives when you ask for it — ⌘K, or a click. */
 
   /* And it gives the keyboard back when you scroll away, so space and the arrow
      keys go on scrolling the page rather than typing into a field nobody can

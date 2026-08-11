@@ -19,7 +19,12 @@
      product actually owns. */
   --page: oklch(98.8% 0.005 152);
   --surface: oklch(99.7% 0.002 152);
-  --hover: oklch(97% 0.008 152);
+  /* A wash rather than a colour. This was a sage grey — the paper's own hue at
+     a chroma that reads as green the moment it sits under a cursor, which put a
+     tint on every row you passed over and made hovering look like a state the
+     app was reporting. Plain black at 3% darkens whatever is underneath and
+     brings nothing of its own. */
+  --hover: rgb(0 0 0 / 0.03);
 
   /* Ink. The original neutral ramp, untinted: the lighter, sage-tinted text was
      tried and taken back out. The paper keeps its tint; the words do not. */
@@ -40,29 +45,15 @@
   --marker: oklch(92% 0.115 98);
 
   /* The dark surface, barely tinted. Any more green here and the working badge
-     would sit on its own colour and stop reading as a signal. */
+     would sit on its own colour and stop reading as a signal.
+
+     Opaque. The panel used to be real glass — a blur of whatever sat behind it
+     plus a scrim to stop the blur deciding how readable the rows were — which
+     is what the app does and what a web page can only imitate. On a static
+     picture there is nothing behind it worth seeing through to, so the blur
+     bought a smeared terminal and a panel whose darkness moved with it. */
   --panel: oklch(18.5% 0.007 155);
   --panel-bar: oklch(21.5% 0.007 155);
-
-  /* The ⌘K panel, from PaletteStyle in SwitcherPalette.swift (0.9.5, "give the
-     ⌘K panel real glass"). Two layers on purpose, and the comment there says
-     why: the material makes it glass, the scrim stops the glass deciding how
-     readable the rows are. A plain blur samples the terminal, so over a pale
-     `ls` the panel went milky and the rows lost their contrast. The darkness
-     has to be a constant, not a function of what happened to be on screen. */
-  --glass-scrim: rgb(10 10 10 / 0.42); /* NSColor(white: 0.04, alpha: 0.42) */
-  --glass-border: rgb(255 255 255 / 0.1); /* NSColor(white: 1, alpha: 0.10) */
-
-  /* Frost. Two things separate frosted glass from clear tinted glass: the blur
-     is heavy enough that what is behind becomes shape rather than text, and the
-     surface scatters a little light of its own. The blur does the first; this
-     film does the second. Kept to a few percent so the scrim still owns how
-     dark the panel is, which is the whole reason the scrim exists: at 7% the
-     film lifted the panel enough to drop `your turn` to 4.45:1, under AA for
-     10.5px text, and systemBlue is not mine to brighten. The blur carries the
-     frost; the film only has to hint that the surface scatters. */
-  --glass-blur: 34px;
-  --glass-frost: linear-gradient(rgb(255 255 255 / 0.045), rgb(255 255 255 / 0.015));
 
   /* Activity, from Sources/Rune/Activity.swift.
      `-lit` is the version that sits on the dark panel, `-ink` the one that has
@@ -151,8 +142,12 @@ svg {
   display: block;
 }
 
+/* The page already owns a highlighter — the stroke through the headline — so
+   selecting text borrows it rather than introducing a second colour. The green
+   this replaced read as a status: the same hue the working badge uses, which
+   made a dragged-over sentence look like something the app was telling you. */
 ::selection {
-  background: oklch(90% 0.05 152);
+  background: oklch(93% 0.08 98);
   color: var(--ink);
 }
 
@@ -182,8 +177,7 @@ code {
 
 /* Prose stays at a readable measure even though the shell is wide enough for
    the terminal to sit beside the headline. */
-.section__note,
-.note {
+.section__note {
   max-width: 62ch;
 }
 
@@ -194,6 +188,21 @@ code {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--faint);
+}
+
+/* A link inside a label. At 11px and already the faintest grey on the page, a
+   rule under the word is the whole signal — a colour would have to fight the
+   greyscale the label is made of, and the label sits above the headline where
+   nothing should compete. It lifts a step out of the grey on hover. */
+.label a {
+  color: var(--soft);
+  border-bottom: 1px solid var(--line);
+  transition: color 0.18s var(--expo), border-color 0.18s var(--expo);
+}
+
+.label a:hover {
+  color: var(--ink);
+  border-color: var(--ink);
 }
 
 /* --- Nav ------------------------------------------------------------------ */
@@ -218,6 +227,7 @@ code {
   font-weight: 700;
   color: var(--ink);
   letter-spacing: -0.02em;
+  flex: none;
 }
 
 /* The mark carries the cursor now, so the wordmark no longer blinks one of its
@@ -244,10 +254,15 @@ code {
   opacity: 1;
 }
 
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
+.nav__in {
+  width: 100%;
+  max-width: 1060px;
+  margin-inline: auto;
+  padding-inline: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .nav__right {
@@ -255,7 +270,10 @@ code {
   align-items: center;
   gap: 6px;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--muted);
 }
 
@@ -691,12 +709,10 @@ code {
   pointer-events: auto;
 }
 
-/* The panel hangs off the window's left edge, so part of it is over paper. That
-   part frosts lighter, because that is what frosted glass does over something
-   pale, and it is the clearest signal that the panel is floating rather than
-   inset. What stops it reading as two shades is the edge: a brighter border and
-   a real shadow all the way round, so the eye reads one pane of glass crossing
-   a boundary. */
+/* The panel hangs off the window's left edge, so part of it is over paper. A
+   brighter border and a real shadow all the way round are what carry it there
+   now that it is opaque — nothing about the surface changes across the
+   boundary, so the edge has to do the whole job of saying it floats. */
 @media (min-width: 1100px) {
   .term__palette {
     left: -24px;
@@ -770,55 +786,46 @@ code {
   padding-top: 1px;
 }
 
-.row__name {
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: -0.015em;
+/* One column narrow, two when there is room for them.
+
+   Multi-column rather than a grid, because `columns` fills down the first
+   column before starting the second: 1–10 on the left, 11–19 on the right, so
+   the order survives being folded in half. A two-column grid would lay the list
+   out across the rows instead and put the second-most-used chord where the
+   eleventh should be.
+
+   Single column is capped short of the shell — the longest description is about
+   fifty characters, and a full-width row would strand the key and its words at
+   opposite ends of the screen. */
+.keys {
+  max-width: 46rem;
 }
 
-.row__desc {
-  grid-column: 2;
-  font-size: 14px;
-  color: var(--soft);
-}
-
-@media (max-width: 560px) {
-  .row {
-    grid-template-columns: 1fr;
+@media (min-width: 880px) {
+  .keys {
+    max-width: none;
+    columns: 2;
+    column-gap: 56px;
   }
-  .row__desc {
-    grid-column: 1;
-  }
-}
 
-/* Four short lists rather than one long one. A flat alphabet of sixteen chords
-   is a reference; these are something you can read once and keep. */
-/* Two, not auto-fit. Three columns fit the shell arithmetically and then wrap
-   every second label onto a second line, which costs more height than the
-   column saved. Two by two also keeps the four groups even. */
-.keygrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 32px 56px;
-}
-
-@media (max-width: 760px) {
-  .keygrid {
-    grid-template-columns: 1fr;
+  /* Half the width means half the room for words, so the key column gives some
+     back. The widest chord on the list is ⌘⌥ ← ↑ ↓ →, which sits inside 7rem —
+     the 8.4rem a full-width row uses was slack that a column can't spare. */
+  .keys .row--tight {
+    grid-template-columns: 7rem minmax(0, 1fr);
   }
 }
 
-.keygroup .label {
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--ring);
+/* A row is one thing: never let a column break land inside one. */
+.keys .row {
+  break-inside: avoid;
 }
 
 /* The rule under a row separates it from the next one, so the last row has
    nothing to separate itself from. Left on, it lands a few pixels from the
    section's own divider and reads as a stray line. */
 .row:last-child,
-.step:last-child,
-.keygroup .row:last-child {
+.step:last-child {
   border-bottom: 0;
 }
 
@@ -935,22 +942,6 @@ code {
   }
 }
 
-.note {
-  margin-top: 18px;
-  padding: 12px 14px;
-  border: 1px dashed var(--ring);
-  border-radius: 8px;
-  background: var(--surface);
-  font-size: 13.5px;
-  line-height: 1.6;
-  color: var(--soft);
-}
-
-.note b {
-  color: var(--ink);
-  font-weight: 600;
-}
-
 /* --- Footer --------------------------------------------------------------- */
 
 .foot {
@@ -979,17 +970,14 @@ code {
 /* A still ⌘K, printed on the page so the indicators can be read on the thing
    they belong to. Narrow enough that the rows stay the shape they are in the
    app rather than stretching to the shell. */
-/* Scoped `.panel.statuspanel`, not bare `.statuspanel`: the two tie on
-   specificity and `.panel` is declared below, so a bare selector loses on
-   source order and this panel rendered as translucent grey over the paper.
-   That is the exact failure the scrim exists to prevent, arrived at from the
-   CSS side instead of the compositing side. */
-.panel.statuspanel {
+.statuspanel {
   max-width: 560px;
-  background: var(--glass-frost), linear-gradient(var(--glass-scrim), var(--glass-scrim)),
-    var(--panel);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+}
+
+/* The agent-state rows below the panel. Enough air that the panel ends and
+   something else begins, rather than the rows reading as its last three. */
+.sources {
+  margin-top: clamp(28px, 4vw, 44px);
 }
 
 /* Scoped through .statuspanel so it outranks `.pal__input`, which sets the
@@ -1004,10 +992,8 @@ code {
 /* --- The ⌘K palette, in the app's own colours ----------------------------- */
 
 .panel {
-  background: var(--glass-frost), var(--glass-scrim);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%) brightness(1.04);
-  backdrop-filter: blur(var(--glass-blur)) saturate(150%) brightness(1.04);
-  border: 1px solid var(--glass-border);
+  background: var(--panel);
+  border: 1px solid rgb(255 255 255 / 0.09);
   border-radius: 12px;
   overflow: hidden;
   color: #fafafa;
@@ -1280,196 +1266,123 @@ code {
   white-space: nowrap;
 }
 
-/* --- The page's own hint bar ---------------------------------------------- */
+/* --- Setup page ------------------------------------------------------------ */
 
-/* Built to read as the paper twin of `.pal__foot`: same spacing, same 10.5px
-   labels, same idea. The site claims you never have to leave the keyboard, so
-   it had better be true of the site. */
-.keybar {
-  position: fixed;
-  left: 50%;
-  bottom: 18px;
-  translate: -50% 0;
-  z-index: 60;
-  display: flex;
-  gap: 14px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--ring);
-  background: color-mix(in srgb, var(--page) 86%, transparent);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 10px 28px -14px #00000026;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--muted);
-  animation: rise 0.6s var(--expo) 0.8s both;
+/* The page after the download. It is the landing page's furniture — same shell,
+   same rows, same dashed rules — arranged as one column of four, because a
+   person following instructions reads down and does not want a layout to
+   navigate on the way. */
+
+.setup {
+  padding-block: clamp(36px, 6vw, 56px) clamp(48px, 8vw, 80px);
 }
 
-.keybar__hint {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
+.setup h1 {
+  margin-top: 14px;
+  font-size: clamp(28px, 3.8vw, 40px);
+  max-width: 16ch;
 }
 
-/* One keycap, used by the bar, the section headings and the download buttons,
-   so the page teaches the same shortcut in three places without three looks.
-   The doubled bottom border is the whole trick: it reads as a key you could
-   press, and pressing it takes that border away. */
-.kbd {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 17px;
-  padding: 0 5px;
-  border-radius: 4px;
-  border: 1px solid var(--ring);
-  border-bottom-width: 2px;
-  background: var(--surface);
-  color: var(--ink);
-  font-family: var(--sans);
-  font-size: 10px;
-  font-weight: 500;
-  transition: transform 0.18s var(--amo), background 0.18s var(--expo),
-    color 0.18s var(--expo);
-}
-
-/* Pressed, so the page answers you rather than just listing itself. */
-.kbd[data-hit="true"] {
-  transform: translateY(2px);
-  border-bottom-width: 1px;
-  background: var(--marker);
-}
-
-/* Beside a heading it is an aside, not a label: quiet until the heading is
-   worth acting on. */
-.kbd--head {
-  color: var(--muted);
-  background: transparent;
-  translate: 0 -2px;
-}
-
-.section__head:hover .kbd--head {
-  color: var(--ink);
-  background: var(--surface);
-}
-
-/* On the ink button, the same cap inverted. */
-.kbd--on-ink {
-  margin-left: 3px;
-  border-color: #ffffff3d;
-  background: #ffffff1f;
-  color: #fff;
-}
-
-.btn:hover .kbd--on-ink {
-  background: #ffffff2e;
-}
-
-/* No keyboard, no bar. */
-@media (max-width: 820px), (hover: none) {
-  .keybar {
-    display: none;
-  }
-}
-
-/* The quarantine warning in the hero. Tighter than the same block in the
-   install section, because the hero column is 460px and the point here is that
-   you see it before you click, not that you read it twice. */
-.hero__caveat {
-  margin-top: 22px;
-}
-
-.hero__caveat .note {
-  margin-top: 0;
-  font-size: 12.5px;
-  line-height: 1.6;
-}
-
-.hero__caveat .step {
-  margin-top: 8px;
-  align-items: start;
-}
-
-/* The hero column is 460px and the command is 52 characters, so left to scroll
-   it truncates. A command you are about to run on your own machine has to be
-   readable in full, so here it wraps instead. It breaks at the space before the
-   path, which is the only sensible place anyway. */
-.hero__caveat .step__cmd {
-  white-space: normal;
-  overflow-x: visible;
-}
-
-.hero__caveat .copy {
-  margin-top: 1px;
-}
-
-
-
-/* --- What it doesn't do ---------------------------------------------------- */
-
-/* Two columns of claims rather than a paragraph of them, because each one is a
-   separate promise and a reader wants to check them one at a time. */
-.limits {
+.setup__list {
+  list-style: none;
+  margin-top: clamp(30px, 4vw, 44px);
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 26px 48px;
+  gap: clamp(26px, 3.5vw, 40px);
 }
 
-@media (max-width: 760px) {
-  .limits {
-    grid-template-columns: 1fr;
-  }
+.setup__step {
+  padding-top: clamp(26px, 3.5vw, 40px);
+  border-top: 1px dashed var(--ring);
 }
 
-.limit h3 {
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  color: var(--ink);
+.setup__step:first-child {
+  padding-top: 0;
+  border-top: 0;
 }
 
-.limit p {
-  margin-top: 7px;
-  font-size: 14px;
+.setup__body {
+  display: grid;
+  grid-template-columns: 3.2rem minmax(0, 1fr);
+  gap: 4px 12px;
+  align-items: start;
+  max-width: 66ch;
+}
+
+/* The number is the same mono label the rest of the page uses for a key. It is
+   the one on the left of a row, in the position every row on this site puts the
+   thing you scan for. */
+.setup__n {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--faint);
+  padding-top: 4px;
+}
+
+.setup__text h2 {
+  font-size: clamp(17px, 2vw, 19px);
+  letter-spacing: -0.02em;
+}
+
+.setup__text p {
+  margin-top: 8px;
+  font-size: 14.5px;
   line-height: 1.62;
   color: var(--soft);
 }
 
-/* --- Recent releases -------------------------------------------------------- */
-
-/* Read live, so it is evidence rather than a claim about pace. Tags are short
-   and there are only six, so they read better as a row of chips than a list. */
-.ships {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.ships a {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
-  padding: 7px 12px;
-  border: 1px solid var(--ring);
-  border-radius: 999px;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  transition: border-color 0.18s var(--expo), background 0.18s var(--expo);
-}
-
-.ships a:hover {
-  border-color: var(--ink);
+/* The command inside a step: the same box the caveat uses, indented under the
+   words it belongs to rather than bleeding out to the column edge. */
+.setup__text .step {
+  margin: 14px 0 0;
+  padding: 11px 12px;
+  border: 1px dashed var(--ring);
+  border-radius: 8px;
   background: var(--surface);
 }
 
-.ships__tag {
-  color: var(--ink);
+/* Room for a picture that may not exist yet. Sized by its own image rather than
+   by a fixed height, so a screenshot at any aspect drops in without the frame
+   having an opinion about it. */
+.shot {
+  margin-top: 18px;
+  margin-left: calc(3.2rem + 12px);
+  max-width: 640px;
+  border: 1px solid var(--ring);
+  border-radius: 10px;
+  background: var(--surface);
+  overflow: hidden;
 }
 
-.ships__when {
-  color: var(--faint);
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 640px) {
+  .setup__body {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .setup__n {
+    padding-top: 0;
+  }
+
+  .shot {
+    margin-left: 0;
+  }
+}
+
+/* An inline link in running text, which the landing page never needed and this
+   one does twice. Underlined by a border so the rule sits a little below the
+   baseline instead of through the descenders. */
+.link {
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  transition: border-color 0.18s var(--expo);
+}
+
+.link:hover {
+  border-color: var(--ink);
 }

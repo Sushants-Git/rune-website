@@ -1,32 +1,12 @@
 import { useState } from "react";
-import { QUARANTINE } from "../data";
-
-/* The one thing that will go wrong, said next to the button that causes it.
-
-   It appears twice, beside the hero download and again under the install one,
-   because someone who downloads from the top and never scrolls will meet "Rune
-   is damaged" with no explanation and reasonably conclude the download is
-   broken. Leading with the beta rather than with the scary dialog puts it where
-   it belongs: a thing not done yet, not a defence against an accusation.
-
-   One component rather than two copies, so the wording can't drift between the
-   place people hit the problem and the place it's explained. */
-export default function Quarantine() {
-  return (
-    <>
-      <p className="note">
-        <b>Rune is still in beta.</b> No paid Developer ID yet, so macOS blocks the
-        first launch and calls the app damaged. Clear the flag once and it never comes
-        back:
-      </p>
-      <Cmd cmd={QUARANTINE} note="or: System Settings → Privacy & Security → Open Anyway" />
-    </>
-  );
-}
 
 /* A single command to copy. Not a numbered step: there is one of it, and the
-   prompt says so better than an "01" nothing follows. */
-function Cmd({ cmd, note }) {
+   prompt says so better than an "01" nothing follows.
+
+   Its own file because two places now need it — the caveat beside the download
+   button and step three of the install page — and the same command copied by
+   two different buttons would eventually be two different commands. */
+export default function Cmd({ cmd, note }) {
   const [done, setDone] = useState(false);
 
   async function copy() {

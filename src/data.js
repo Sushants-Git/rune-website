@@ -1,11 +1,16 @@
 export const REPO = "https://github.com/Sushants-Git/Rune";
 export const RELEASES = `${REPO}/releases`;
 
+/* The thing doing the hard part. Named twice on the page — once at the top and
+   once at the bottom — so the address lives here rather than in two places that
+   can disagree. */
+export const GHOSTTY = "https://github.com/ghostty-org/ghostty";
+
 /* Only a fallback label. The button's real href and version come from the
    Releases API at run time (see useRelease.js), because a version baked in here
    is wrong the moment the next tag ships, and this page already shipped three
    releases out of date. */
-export const VERSION = "0.7.6";
+export const VERSION = "0.13.7";
 
 /* Rune is ad-hoc signed, not signed with a Developer ID, so macOS quarantines
    the download and refuses the first launch. Saying so plainly beats letting
@@ -16,6 +21,41 @@ export const VERSION = "0.7.6";
    command is the answer that holds everywhere and the Settings path is the
    one for people who would rather not paste a command. */
 export const QUARANTINE = "xattr -dr com.apple.quarantine /Applications/Rune.app";
+
+/* What happens after the download, on its own page.
+
+   Four steps, because there are four: the dmg, the drag, the flag, the launch.
+   Three of them are what every unsigned Mac app asks of you and the fourth is
+   the one that goes wrong — and a person who has just clicked Download is
+   exactly the person who needs them, which is why the button goes here rather
+   than leaving the instructions further down a page they have stopped reading.
+
+   `shot` is where each step's picture goes. Drop a file at that path in
+   `public/` and it appears; until then the frame stays empty rather than
+   showing a broken image. */
+export const INSTALL_STEPS = [
+  {
+    title: "Open Rune.dmg",
+    desc: "From your Downloads folder.",
+    shot: "/steps/1-open-dmg.png",
+  },
+  {
+    title: "Drag Rune into Applications",
+    desc: "Onto the folder beside it in the window that opens.",
+    shot: "/steps/2-drag.png",
+  },
+  {
+    title: "Clear the quarantine flag",
+    desc: "Rune is signed ad-hoc, so macOS calls it damaged on first launch. It isn't. Run this once, or use System Settings → Privacy & Security → Open Anyway.",
+    cmd: QUARANTINE,
+    shot: "/steps/3-terminal.png",
+  },
+  {
+    title: "Open Rune from Applications",
+    desc: "It picks up the ~/.config/ghostty/config you already have.",
+    shot: "/steps/4-open.png",
+  },
+];
 
 /* The states in Sources/Rune/Activity.swift.
 
@@ -29,69 +69,6 @@ export const ACTIVITY = {
   working: { label: "working", tone: "var(--working-lit)", pulses: true },
   waiting: { label: "your turn", tone: "var(--turn-lit)", pulses: false },
 };
-
-/* The same, in the darker tones that survive on paper, and what each one means
-   on a row. Three lines is the entire vocabulary you have to learn. */
-export const STATES = [
-  {
-    key: "working",
-    name: "working",
-    tone: "var(--working-ink)",
-    desc: "Mid-turn, with the clock running. Nothing needs you.",
-  },
-  {
-    key: "waiting",
-    name: "your turn",
-    tone: "var(--turn-ink)",
-    desc: "It stopped, at its prompt or on a question. Nothing happens until you go there.",
-  },
-  {
-    key: "idle",
-    name: "nothing at all",
-    tone: "var(--muted)",
-    desc: "A shell, or an agent that publishes no state. Rune stays quiet rather than guessing.",
-  },
-];
-
-/* The three axes, which is the whole layout model in three lines. */
-export const AXES = [
-  {
-    key: "⌘D",
-    name: "Splits",
-    desc: "Divide the pane you are in. Side by side, as many as the window will hold.",
-  },
-  {
-    key: "⌘T",
-    name: "Tabs",
-    desc: "A strip inside the title bar, beside the window controls. It costs no vertical space.",
-  },
-  {
-    key: "⌘N",
-    name: "Workspaces",
-    desc: "A whole set of tabs and splits, reachable only from ⌘K. The list never reshuffles.",
-  },
-];
-
-/* What Rune does not do, which for a program that watches your terminals is the
-   more useful half of the story. Every line here is checkable in the source:
-
-     - the only hosts in Sources/Rune are api.github.com and github.com for
-       updates, and opencode.ai once, to fetch the plugin you asked for
-     - grepping for analytics, telemetry, posthog, segment, mixpanel or sentry
-       across Sources/Rune returns nothing
-     - `ghostty_surface_read_text` appears once, in ZoomScrollTest.swift; the
-       agent-state path never calls it
-     - Updater.checkInterval is 60 * 60 */
-export const LIMITS = [
-  {
-    name: "It doesn't read your screen",
-    desc: "Rune asks each agent what it is doing. It never scrapes the rendered terminal, which it tried once and abandoned: the read takes the same lock the IO thread holds, so it stalled under exactly the busy agent you wanted to watch.",
-  },
-  {
-    name: "It doesn't phone home",
-    desc: "No analytics, no telemetry, no account. The only thing Rune ever sends is a request to the GitHub Releases API, once an hour, to see whether a newer version exists.",
-  },
-];
 
 /* Where each agent's state comes from. All three publish now: opencode gained a
    plugin in 0.8.x, so the old "publishes nothing" line is no longer true. */
@@ -109,14 +86,6 @@ export const SOURCES = [
     detail: "a plugin, installed with one command",
   },
 ];
-
-/* The three agents AgentIcon.swift knows how to spot, by the process running in
-   the terminal. Their marks live in src/components/AgentIcon.jsx. */
-export const AGENTS = {
-  claude: { name: "claude" },
-  codex: { name: "codex" },
-  opencode: { name: "opencode" },
-};
 
 /* What the ⌘K list holds: workspaces, in creation order, never reshuffled.
 
@@ -245,45 +214,35 @@ export const SESSIONS = {
 /* Only what Rune adds. Copy, paste, font size and the rest behave the way they
    do in every other terminal, and listing them is noise.
 
-   Grouped by what you're trying to do, because a flat alphabet of sixteen
-   chords is a reference and these four short lists are something you can
-   actually learn. */
-export const KEYGROUPS = [
-  {
-    name: "Get there",
-    keys: [
-      ["⌘K", "Switch to workspace…"],
-      ["⌘1–⌘9", "Jump to a workspace by position"],
-      ["⌥1–⌥9", "Jump to a tab by position"],
-    ],
-  },
-  {
-    name: "Inside ⌘K",
-    keys: [
-      ["↑ ↓", "Move, previewing each one behind the panel"],
-      ["⌘R", "Rename, in place"],
-      ["⌘P", "Pin to the top"],
-      ["⌘C", "Close it, and everything in it"],
-    ],
-  },
-  {
-    name: "Make one",
-    keys: [
-      ["⌘N", "New workspace"],
-      ["⌘T", "New tab"],
-      ["⌘D / ⌘⇧D", "Split right / down"],
-      ["⌘⇧N", "New window"],
-    ],
-  },
-  {
-    name: "Panes",
-    keys: [
-      ["⌘⌥ ← ↑ ↓ →", "Focus the pane that way"],
-      ["⌘⇧↵", "Zoom it, or put it back"],
-      ["⌘⌥=", "Equalize the splits"],
-      ["⌘W / ⌘⇧W", "Close the terminal / the window"],
-    ],
-  },
+   One list, ordered by how often you reach for it rather than by what part of
+   the app it belongs to. The four thematic groups this replaced read as a
+   reference — you had to know which box a chord lived in before you could find
+   it — and the chords you press fifty times a day were scattered one per box.
+   Frequency puts them together at the top, where someone learning Rune will
+   actually stop reading.
+
+   ⌘W is one row rather than two. It closed a terminal in the Panes group and a
+   ⌘K row in the switcher group, and since 0.13.7 those are the same key doing
+   the same thing to whatever you are looking at. */
+export const KEYS = [
+  ["⌘K", "Switch to workspace…"],
+  ["⌘N", "New workspace"],
+  ["⌘W", "Close the terminal, or the ⌘K row"],
+  ["⌘P", "Pin a workspace to the top of ⌘K"],
+  ["⌘1–⌘9", "Jump to a workspace by position"],
+  ["⌘R", "Rename a workspace, in place"],
+  ["⌥1–⌥9", "Jump to a tab by position"],
+  ["↑ ↓", "Move through ⌘K, previewing each one"],
+  ["⌘T", "New tab"],
+  ["⌘D / ⌘⇧D", "Split right / down"],
+  ["⌘F", "Find in the scrollback"],
+  ["⌘G / ⌘⇧G", "Next / previous match"],
+  ["⌘⌥ ← ↑ ↓ →", "Focus the pane that way"],
+  ["⌘⇧[ / ⌘⇧]", "Previous / next tab"],
+  ["⌘⇧↵", "Zoom a pane, or put it back"],
+  ["⌘⌥=", "Equalize the splits"],
+  ["⌘⇧N", "New window"],
+  ["⌘⇧W", "Close the window"],
 ];
 
 /* ---------------------------------------------------------------------------

@@ -44,9 +44,24 @@ export default function CommandPalette({
     setOwnSelection((s) => Math.min(s, Math.max(rows.length - 1, 0)));
   }, [rows.length]);
 
+  /* Keep the highlighted row in view by scrolling the list, and only the list.
+
+     This was `row.scrollIntoView({ block: "nearest" })`, which scrolls the
+     nearest scrollable ancestor — and when the list is short enough not to
+     overflow, that ancestor is the document. So every step of the opening
+     demo, which walks the highlight down five rows, scrolled the page back up
+     to the panel while you were reading something further down. */
   useEffect(() => {
-    const row = listRef.current?.children[selection];
-    row?.scrollIntoView({ block: "nearest" });
+    const list = listRef.current;
+    const row = list?.children[selection];
+    if (!list || !row) return;
+
+    const top = row.offsetTop;
+    const bottom = top + row.offsetHeight;
+    if (top < list.scrollTop) list.scrollTop = top;
+    else if (bottom > list.scrollTop + list.clientHeight) {
+      list.scrollTop = bottom - list.clientHeight;
+    }
   }, [selection]);
 
   /* Every ⌘K starts on the workspace you are in, which the parent hands over as
@@ -175,13 +190,13 @@ export default function CommandPalette({
           four. Arrows moving a selection and ⏎ taking it are what every list on
           the machine already does, so spelling them out spent half the bar
           teaching nobody anything and crowded out the ones particular to Rune.
-          `esc` says Dismiss rather than Close, because ⌘C closes a workspace
+          `esc` says Dismiss rather than Close, because ⌘W closes a workspace
           and two rows both labelled Close would be a riddle in the one place
           that exists to answer them. */}
       <div className="pal__foot">
         <Hint keys={["⌘R"]} label="Rename" />
         <Hint keys={["⌘P"]} label="Pin" />
-        <Hint keys={["⌘C"]} label="Close" />
+        <Hint keys={["⌘W"]} label="Close" />
         <Hint keys={["esc"]} label="Dismiss" />
       </div>
     </div>

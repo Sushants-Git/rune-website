@@ -7,16 +7,51 @@
     <title>Rune — the terminal for humans who run agents</title>
     <meta
       name="description"
-      content="A macOS terminal built on libghostty. Splits, tabs and workspaces on three axes, and a ⌘K switcher that tells you which coding agent is waiting on you."
+      content="A macOS terminal built on libghostty. Every terminal says what its agent is doing, and every one of them is a chord away."
     />
     <meta name="theme-color" content="#fcfcfc" />
     <meta name="color-scheme" content="light" />
+    <link rel="canonical" href="https://rune-website.vercel.app/" />
 
+    <!--
+      The share card. Absolute URLs throughout, and not as a formality: X,
+      Facebook and LinkedIn all resolve og:image against their own host rather
+      than the page's, so a relative path is a card that silently renders
+      without a picture. If the site moves to another domain, these four hrefs
+      and the canonical above are what has to move with it.
+
+      og:image is public/og.png — 1200×630 at 2× (2400×1200), which is what
+      every platform crops from. Twitter reads the og:* tags for everything it
+      can, so only the two it has no equivalent for are repeated below.
+    -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Rune" />
+    <meta property="og:url" content="https://rune-website.vercel.app/" />
     <meta property="og:title" content="Rune — the terminal for humans who run agents" />
     <meta
       property="og:description"
-      content="Splits, tabs and workspaces on three axes, and a ⌘K switcher that tells you which coding agent is waiting on you."
+      content="Every terminal says what its agent is doing, and every one of them is a chord away. A macOS terminal built on libghostty."
+    />
+    <meta property="og:image" content="https://rune-website.vercel.app/og.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="2400" />
+    <meta property="og:image:height" content="1260" />
+    <meta
+      property="og:image:alt"
+      content="The Rune ⌘K switcher, listing four workspaces with the two running agents marked working and one marked your turn."
+    />
+
+    <!-- summary_large_image is the only card that shows a 1.91:1 image at size. -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Rune — the terminal for humans who run agents" />
+    <meta
+      name="twitter:description"
+      content="Every terminal says what its agent is doing, and every one of them is a chord away. A macOS terminal built on libghostty."
+    />
+    <meta name="twitter:image" content="https://rune-website.vercel.app/og.png" />
+    <meta
+      name="twitter:image:alt"
+      content="The Rune ⌘K switcher, listing four workspaces with the two running agents marked working and one marked your turn."
     />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
