@@ -870,6 +870,15 @@ code {
   background: var(--surface);
 }
 
+/* One line on why to bother. Without a reason, an optional command on a page
+   is a command nobody runs. */
+.hook p {
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.62;
+  color: var(--soft);
+}
+
 /* --- Install -------------------------------------------------------------- */
 
 .step {

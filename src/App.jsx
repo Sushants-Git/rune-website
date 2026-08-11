@@ -155,6 +155,10 @@ export default function App() {
               while they go looking for it. */}
           <div className="hook">
             <Cmd cmd={OPENCODE_HOOK} />
+            <p>
+              Without it Rune guesses opencode's turn from its session database. With
+              it, opencode says so itself, the moment it happens.
+            </p>
           </div>
         </section>
 
