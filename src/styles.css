@@ -19,13 +19,6 @@
      product actually owns. */
   --page: oklch(98.8% 0.005 152);
   --surface: oklch(99.7% 0.002 152);
-  /* A wash rather than a colour. This was a sage grey — the paper's own hue at
-     a chroma that reads as green the moment it sits under a cursor, which put a
-     tint on every row you passed over and made hovering look like a state the
-     app was reporting. Plain black at 3% darkens whatever is underneath and
-     brings nothing of its own. */
-  --hover: rgb(0 0 0 / 0.03);
-
   /* Ink. The original neutral ramp, untinted: the lighter, sage-tinted text was
      tried and taken back out. The paper keeps its tint; the words do not. */
   --ink: #1b1b1b;
@@ -771,12 +764,6 @@ code {
   padding: 13px 10px 13px 8px;
   margin-inline: -8px;
   border-bottom: 1px dashed var(--ring);
-  border-radius: 6px;
-  transition: background 0.15s var(--expo);
-}
-
-.row:hover {
-  background: var(--hover);
 }
 
 .row__key {
@@ -866,10 +853,6 @@ code {
   background: var(--surface);
 }
 
-.hook .step:hover {
-  background: var(--surface);
-}
-
 /* One line on why to bother. Without a reason, an optional command on a page
    is a command nobody runs. */
 .hook p {
@@ -889,12 +872,6 @@ code {
   padding: 11px 10px 11px 8px;
   margin-inline: -8px;
   border-bottom: 1px dashed var(--ring);
-  border-radius: 6px;
-  transition: background 0.15s var(--expo);
-}
-
-.step:hover {
-  background: var(--hover);
 }
 
 .step__n {
